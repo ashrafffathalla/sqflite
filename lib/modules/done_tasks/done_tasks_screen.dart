@@ -6,9 +6,7 @@ class NewTasksScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: Text(
-        'Hello Done Tasks'
-      ),
+      child: Text('Hello Done Tasks'),
     );
   }
 }
