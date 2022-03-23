@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:sqflite/modules/archive_tasks/archive_tasks_screen.dart';
+import 'package:sqflite/modules/done_tasks/done_tasks_screen.dart';
 import 'package:sqflite/modules/new_tasks/new_tasks_screen.dart';
 
 class HomeLayout extends StatefulWidget {
@@ -10,13 +12,26 @@ class HomeLayout extends StatefulWidget {
 
 class _HomeLayoutState extends State<HomeLayout> {
   int currentIndex = 0;
+  List<Widget> screens = [
+    NewTasksScreen(),
+    DoneTasksScreen(),
+    ArchiveTasksScreen()
+  ];
+  List<String> titles =
+  [
+    'New Tasks',
+    'Done Tasks',
+    'Archive Tasks'
+  ];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title:const Text('TODO'),
+        title: Text(
+          titles[currentIndex],
+        ),
       ),
-      body: NewTasksScreen(),
+      body: screens[currentIndex],
       floatingActionButton: FloatingActionButton(
         onPressed: () {},
         child:const Icon(Icons.add),

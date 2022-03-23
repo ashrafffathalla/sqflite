@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class NewTasksScreen extends StatelessWidget {
-  const NewTasksScreen({Key? key}) : super(key: key);
+class DoneTasksScreen extends StatelessWidget {
+  const DoneTasksScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
