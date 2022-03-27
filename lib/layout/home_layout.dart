@@ -20,6 +20,7 @@ class _HomeLayoutState extends State<HomeLayout> {
     const ArchiveTasksScreen(),
   ];
   List<String> titles = ['New Tasks', 'Done Tasks', 'Archive Tasks'];
+  Database? database;
   @override
   void initState() {
     super.initState();
@@ -77,7 +78,7 @@ class _HomeLayoutState extends State<HomeLayout> {
 
   void createDatabase()async
   {
-    var database  = await openDatabase(
+     database  = await openDatabase(
       'to_to',
       version: 1,
       onCreate:(database,version)
@@ -94,7 +95,11 @@ class _HomeLayoutState extends State<HomeLayout> {
   }
   void insertToDatabase()
   {
-
+    database!.transaction((txn)
+    {
+      txn.rawInsert('').then((value){}).catchError((error){});
+      return null;
+    });
   }
 
 
