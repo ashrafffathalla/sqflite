@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:sqflite/modules/archive_tasks/archive_tasks_screen.dart';
-import 'package:sqflite/modules/done_tasks/done_tasks_screen.dart';
-import 'package:sqflite/modules/new_tasks/new_tasks_screen.dart';
+import 'package:sqflite/sqflite.dart';
+
+import '../modules/archive_tasks/archive_tasks_screen.dart';
+import '../modules/done_tasks/done_tasks_screen.dart';
+import '../modules/new_tasks/new_tasks_screen.dart';
 
 class HomeLayout extends StatefulWidget {
   const HomeLayout({Key? key}) : super(key: key);
@@ -13,17 +15,18 @@ class HomeLayout extends StatefulWidget {
 class _HomeLayoutState extends State<HomeLayout> {
   int currentIndex = 0;
   List<Widget> screens = [
-    NewTasksScreen(),
-    DoneTasksScreen(),
-    ArchiveTasksScreen()
+    const NewTasksScreen(),
+    const DoneTasksScreen(),
+    const ArchiveTasksScreen(),
   ];
-  List<String> titles =
-  [
-    'New Tasks',
-    'Done Tasks',
-    'Archive Tasks'
-  ];
+  List<String> titles = ['New Tasks', 'Done Tasks', 'Archive Tasks'];
   @override
+  void initState() {
+    super.initState();
+    createDatabase();
+  }
+  @override
+
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -33,40 +36,66 @@ class _HomeLayoutState extends State<HomeLayout> {
       ),
       body: screens[currentIndex],
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
-        child:const Icon(Icons.add),
+        onPressed: () async {
+          var name = await getName();
+          print(name);
+        },
+        child: const Icon(Icons.add),
       ),
-      bottomNavigationBar:BottomNavigationBar(
+      bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
         currentIndex: currentIndex,
-        onTap: (index)
-        {
-         setState(() {
-           currentIndex = index;
-         });
+        onTap: (index) {
+          setState(() {
+            currentIndex = index;
+          });
         },
-        items:const
-        [
+        items: const [
           BottomNavigationBarItem(
               icon: Icon(
-                  Icons.menu,
+                Icons.menu,
               ),
-            label: 'Tasks'
-          ),
+              label: 'Tasks'),
           BottomNavigationBarItem(
               icon: Icon(
-                  Icons.check_circle_outline,
+                Icons.check_circle_outline,
               ),
-            label: 'Done'
-          ),
+              label: 'Done'),
           BottomNavigationBarItem(
               icon: Icon(
-                  Icons.archive_outlined,
+                Icons.archive_outlined,
               ),
-            label: 'Archived'
-          ),
+              label: 'Archived'),
         ],
       ),
     );
   }
+
+  Future<String> getName() async {
+    return 'Ahmed Ali';
+  }
+
+  void createDatabase()async
+  {
+    var database  = await openDatabase(
+      'to_to',
+      version: 1,
+      onCreate:(database,version)
+      {
+        print('database created');
+         database.execute('CREATE TABLE tasks(id INTEGER PRIMARY KEY, date TEXT, time TEXT, status TEXT)').then((value){
+           print('table created');
+         }).catchError((error){print('error when create table ${error.toString()}');});
+      },
+      onOpen: (database){
+        print('database Opend');
+      }
+    );
+  }
+  void insertDatabase()
+  {
+
+  }
+
+
 }
