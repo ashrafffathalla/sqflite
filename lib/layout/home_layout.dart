@@ -92,7 +92,7 @@ class _HomeLayoutState extends State<HomeLayout> {
       }
     );
   }
-  void insertDatabase()
+  void insertToDatabase()
   {
 
   }
