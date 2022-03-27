@@ -20,14 +20,16 @@ class _HomeLayoutState extends State<HomeLayout> {
     const ArchiveTasksScreen(),
   ];
   List<String> titles = ['New Tasks', 'Done Tasks', 'Archive Tasks'];
-  Database? database;
+
+  late Database database;
+
   @override
   void initState() {
     super.initState();
     createDatabase();
   }
-  @override
 
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -37,9 +39,8 @@ class _HomeLayoutState extends State<HomeLayout> {
       ),
       body: screens[currentIndex],
       floatingActionButton: FloatingActionButton(
-        onPressed: () async {
-          var name = await getName();
-          print(name);
+        onPressed: () {
+          insertToDatabase();
         },
         child: const Icon(Icons.add),
       ),
@@ -76,31 +77,34 @@ class _HomeLayoutState extends State<HomeLayout> {
     return 'Ahmed Ali';
   }
 
-  void createDatabase()async
-  {
-     database  = await openDatabase(
-      'to_to',
-      version: 1,
-      onCreate:(database,version)
-      {
-        print('database created');
-         database.execute('CREATE TABLE tasks(id INTEGER PRIMARY KEY, date TEXT, time TEXT, status TEXT)').then((value){
-           print('table created');
-         }).catchError((error){print('error when create table ${error.toString()}');});
-      },
-      onOpen: (database){
-        print('database Opend');
-      }
-    );
-  }
-  void insertToDatabase()
-  {
-    database!.transaction((txn)
-    {
-      txn.rawInsert('').then((value){}).catchError((error){});
-      return null;
+  void createDatabase() async {
+    database =
+        await openDatabase('do_do', version: 1, onCreate: (database, version) {
+      print('database created');
+      database
+          .execute(
+              'CREATE TABLE tasks(id INTEGER PRIMARY KEY, title TEXT, date TEXT, time TEXT, status TEXT)')
+          .then((value) {
+        print('table created');
+      }).catchError((error) {
+        print('error when create table ${error.toString()}');
+      });
+    }, onOpen: (database) {
+      print('database Opend');
     });
   }
 
-
+  void insertToDatabase() {
+    database.transaction((txn) {
+      var ris = txn
+          .rawInsert(
+              'INSERT INTO tasks(title,date,time,status) VALUES("first task","0222","10","new")')
+          .then((value) {
+        print("$value insert successfully");
+      }).catchError((error) {
+        print('Error when insert ${error.toString()}');
+      });
+      return ris;
+    });
+  }
 }
