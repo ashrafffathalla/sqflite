@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sqflite/sqflite.dart';
+import 'package:to_to/shared/components/components.dart';
 
 import '../modules/archive_tasks/archive_tasks_screen.dart';
 import '../modules/done_tasks/done_tasks_screen.dart';
@@ -23,6 +24,9 @@ class _HomeLayoutState extends State<HomeLayout> {
 
   late Database database;
   var scaffoldKey = GlobalKey<ScaffoldState>();
+  bool isBottomSheetShow = false;
+  IconData fabIcon = Icons.edit;
+  var titleController = TextEditingController();
 
   @override
   void initState() {
@@ -43,15 +47,45 @@ class _HomeLayoutState extends State<HomeLayout> {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           //insertToDatabase();
-          scaffoldKey.currentState!.showBottomSheet(
-                  (context) => Container(
-                    width: double.infinity,
-                    height: 120.0,
-                    color: Colors.red,
-                  ),
-          );
+          if(isBottomSheetShow)
+          {
+            Navigator.pop(context);
+            isBottomSheetShow = false;
+            setState(() {
+              fabIcon = Icons.edit;
+            });
+          }else{
+            scaffoldKey.currentState!.showBottomSheet(
+                  (context) => Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        defaultFormField(
+                            controller: titleController,
+                            type: TextInputType.text,
+                            validate: (value){
+                              if(value!.isNotEmpty)
+                                {
+                                  return 'title must not be empty';
+                                }
+                              return null;
+                            },
+                            label: 'Task Title',
+                            prefix: Icons.title,
+                        )
+                      ],
+                    ),
+                  )
+            );
+            isBottomSheetShow = true;
+            setState(() {
+              fabIcon = Icons.add;
+            });
+          }
+
         },
-        child: const Icon(Icons.add),
+        child: Icon(fabIcon),
       ),
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
