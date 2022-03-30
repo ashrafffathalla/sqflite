@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:to_to/shared/components/components.dart';
 
@@ -116,15 +117,15 @@ class _HomeLayoutState extends State<HomeLayout> {
                         defaultFormField(
                           controller: dateController,
                           type: TextInputType.datetime,
-                          onTab: ()
-                          {
+                          onTab: () {
                             showDatePicker(
-                                context: context,
-                                initialDate: DateTime.now(),
-                                firstDate: DateTime.now(),
-                                lastDate: DateTime.parse('2025-03-02'),
+                              context: context,
+                              initialDate: DateTime.now(),
+                              firstDate: DateTime.now(),
+                              lastDate: DateTime.parse('2025-03-02'),
                             ).then((value) {
-                              print(value.toString());
+                              dateController.text =
+                                  DateFormat.yMMMd().format(value);
                             });
                           },
                           validate: (value) {
