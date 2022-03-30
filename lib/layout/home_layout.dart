@@ -22,6 +22,7 @@ class _HomeLayoutState extends State<HomeLayout> {
   List<String> titles = ['New Tasks', 'Done Tasks', 'Archive Tasks'];
 
   late Database database;
+  var scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   void initState() {
@@ -32,6 +33,7 @@ class _HomeLayoutState extends State<HomeLayout> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: scaffoldKey,
       appBar: AppBar(
         title: Text(
           titles[currentIndex],
@@ -40,7 +42,14 @@ class _HomeLayoutState extends State<HomeLayout> {
       body: screens[currentIndex],
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          insertToDatabase();
+          //insertToDatabase();
+          scaffoldKey.currentState!.showBottomSheet(
+                  (context) => Container(
+                    width: double.infinity,
+                    height: 120.0,
+                    color: Colors.red,
+                  ),
+          );
         },
         child: const Icon(Icons.add),
       ),
