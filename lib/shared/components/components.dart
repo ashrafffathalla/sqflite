@@ -28,7 +28,6 @@ Widget defaultFormField({
   required String label,
   required IconData prefix,
   final VoidCallback? onTab,
-  Function? onTap,
   final void Function(String)? onChange,
   IconData? suffix,
   final VoidCallback? suffixPressed,

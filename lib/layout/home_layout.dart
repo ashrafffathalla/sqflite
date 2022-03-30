@@ -23,10 +23,17 @@ class _HomeLayoutState extends State<HomeLayout> {
   List<String> titles = ['New Tasks', 'Done Tasks', 'Archive Tasks'];
 
   late Database database;
+
+  //keys
   var scaffoldKey = GlobalKey<ScaffoldState>();
+  var formKey = GlobalKey<FormState>();
+
+  //end keys
   bool isBottomSheetShow = false;
   IconData fabIcon = Icons.edit;
   var titleController = TextEditingController();
+  var timeController = TextEditingController();
+  var dateController = TextEditingController();
 
   @override
   void initState() {
@@ -47,43 +54,98 @@ class _HomeLayoutState extends State<HomeLayout> {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           //insertToDatabase();
-          if(isBottomSheetShow)
-          {
-            Navigator.pop(context);
-            isBottomSheetShow = false;
-            setState(() {
-              fabIcon = Icons.edit;
-            });
-          }else{
-            scaffoldKey.currentState!.showBottomSheet(
-                  (context) => Padding(
-                    padding: const EdgeInsets.all(10.0),
+          if (isBottomSheetShow) {
+            if (formKey.currentState!.validate()) {
+              Navigator.pop(context);
+              isBottomSheetShow = false;
+              setState(() {
+                fabIcon = Icons.edit;
+              });
+            }
+          } else {
+            scaffoldKey.currentState!.showBottomSheet((context) => Container(
+                  color: Colors.grey[100],
+                  padding: const EdgeInsets.all(20.0),
+                  child: Form(
+                    key: formKey,
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         defaultFormField(
-                            controller: titleController,
-                            type: TextInputType.text,
-                            validate: (value){
-                              if(value!.isNotEmpty)
-                                {
-                                  return 'title must not be empty';
-                                }
-                              return null;
-                            },
-                            label: 'Task Title',
-                            prefix: Icons.title,
-                        )
+                          controller: titleController,
+                          type: TextInputType.text,
+                          validate: (value) {
+                            if (value!.isEmpty) {
+                              return 'time must not be empty';
+                            }
+
+                            return null;
+                          },
+                          label: 'Task Title',
+                          prefix: Icons.title,
+                        ),
+                        const SizedBox(
+                          height: 15.0,
+                        ),
+                        defaultFormField(
+                          controller: timeController,
+                          type: TextInputType.datetime,
+                          onTab: () {
+                            showTimePicker(
+                              context: context,
+                              initialTime: TimeOfDay.now(),
+                            ).then((value) {
+                              timeController.text =
+                                  value!.format(context).toString();
+                              print(value.format(context));
+                            });
+                          },
+                          validate: (value) {
+                            if (value!.isEmpty) {
+                              return 'time must not be empty';
+                            }
+
+                            return null;
+                          },
+                          label: 'Task Time',
+                          prefix: Icons.watch_later_outlined,
+                        ),
+                        const SizedBox(
+                          height: 15.0,
+                        ),
+                        defaultFormField(
+                          controller: dateController,
+                          type: TextInputType.datetime,
+                          onTab: ()
+                          {
+                            showDatePicker(
+                                context: context,
+                                initialDate: DateTime.now(),
+                                firstDate: DateTime.now(),
+                                lastDate: DateTime.parse('2025-03-02'),
+                            ).then((value) {
+                              print(value.toString());
+                            });
+                          },
+                          validate: (value) {
+                            if (value!.isEmpty) {
+                              return 'Date must not be empty';
+                            }
+
+                            return null;
+                          },
+                          label: 'Task Date',
+                          prefix: Icons.date_range_outlined,
+                        ),
                       ],
                     ),
-                  )
-            );
+                  ),
+                ));
             isBottomSheetShow = true;
             setState(() {
               fabIcon = Icons.add;
             });
           }
-
         },
         child: Icon(fabIcon),
       ),
