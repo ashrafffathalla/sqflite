@@ -54,14 +54,22 @@ class _HomeLayoutState extends State<HomeLayout> {
       body: screens[currentIndex],
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          //insertToDatabase();
           if (isBottomSheetShow) {
             if (formKey.currentState!.validate()) {
-              Navigator.pop(context);
-              isBottomSheetShow = false;
-              setState(() {
-                fabIcon = Icons.edit;
+              insertToDatabase(
+                title: titleController.text,
+                date: dateController.text,
+                time: timeController.text,
+              ).then((value){
+                Navigator.pop(context);
+                isBottomSheetShow = false;
+                setState(() {
+                  fabIcon = Icons.edit;
+                });
+              }).catchError((error){
+
               });
+
             }
           } else {
             scaffoldKey.currentState!.showBottomSheet((context) => Container(
@@ -200,11 +208,16 @@ class _HomeLayoutState extends State<HomeLayout> {
     });
   }
 
-  void insertToDatabase() {
-    database.transaction((txn) {
+  Future insertToDatabase({
+  required String title,
+  required String time,
+  required String date,
+}) async
+  {
+    return await database.transaction((txn) {
       var ris = txn
           .rawInsert(
-              'INSERT INTO tasks(title,date,time,status) VALUES("first task","0222","10","new")')
+              'INSERT INTO tasks(title,date,time,status) VALUES("$title","$date","$time","new")')
           .then((value) {
         print("$value insert successfully");
       }).catchError((error) {
